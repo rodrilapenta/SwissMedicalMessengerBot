@@ -22,7 +22,6 @@ bot.on('message', (payload, reply) => {
 
       console.log(`Devuelto a ${profile.first_name} ${profile.last_name}: ${text}`)
     })
-	
   })
 })
 
