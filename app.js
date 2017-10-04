@@ -22,15 +22,26 @@ bot.hear(['food', 'hungry'], (payload, chat) => {
 	});
 });
 
-bot.hear(['help'], (payload, chat) => {
+bot.hear(['turnos'], (payload, chat) => {
 	// Send a text message with buttons
 	chat.say({
-		text: 'What do you need help with?',
+		text: '¿Qué tipo de turno?',
 		buttons: [
-			{ type: 'postback', title: 'Settings', payload: 'HELP_SETTINGS' },
-			{ type: 'postback', title: 'FAQ', payload: 'HELP_FAQ' },
-			{ type: 'postback', title: 'Talk to a human', payload: 'HELP_HUMAN' }
+			{ type: 'postback', title: 'Médicos', payload: 'MEDICOS' },
+			{ type: 'postback', title: 'Odontológicos', payload: 'ODONTO' }
 		]
+	});
+});
+
+bot.on('postback:MEDICOS', (payload, chat) => {
+	chat.say({
+		text: 'Todavía no está disponible'
+	});
+});
+
+bot.on('postback:ODONTO', (payload, chat) => {
+	chat.say({
+		text: 'Todavía no está disponible'
 	});
 });
 
