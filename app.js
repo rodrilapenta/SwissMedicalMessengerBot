@@ -50,7 +50,7 @@ bot.on('error', (err) => {
   console.log(err.message)
 })
 
-ot.on('postback', (payload, reply, actions) => {
+bot.on('postback', (payload, reply, actions) => {
   reply({ text: 'hey!' + payload}, (err, info) => {})
 })
 
