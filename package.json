@@ -10,7 +10,8 @@
   "author": "rolapenta",
   "license": "ISC",
   "dependencies": {
-    "bootbot": "^1.0.12"
+    "http": "0.0.0",
+    "messenger-bot": "^2.4.0"
   },
   "devDependencies": {},
   "repository": {

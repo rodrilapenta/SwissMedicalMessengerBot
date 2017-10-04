@@ -1,85 +1,29 @@
-'use strict';
-const BootBot = require('bootbot');
+const http = require('http')
+const Bot = require('messenger-bot')
 
-const bot = new BootBot({
-  accessToken: process.env.FB_ACCESS_TOKEN,
-  verifyToken: process.env.FB_VERIFY_TOKEN,
-  appSecret: process.env.FB_APP_SECRET
-});
+let bot = new Bot({
+  token: process.env.FB_ACCESS_TOKEN,
+  verify: process.env.FB_VERIFY_TOKEN,
+  app_secret: process.env.FB_APP_SECRET
+})
 
-bot.hear(['hello', 'hi', /hey( there)?/i], (payload, chat) => {
-	// Send a text message followed by another text message that contains a typing indicator
-	chat.say('Hello, human friend!').then(() => {
-		chat.say('How are you today?', { typing: true });
-	});
-});
+bot.on('error', (err) => {
+  console.log(err.message)
+})
 
-bot.hear(['food', 'hungry'], (payload, chat) => {
-	// Send a text message with quick replies
-	chat.say({
-		text: 'What do you want to eat today?',
-		quickReplies: ['Mexican', 'Italian', 'American', 'Argentine']
-	});
-});
+bot.on('message', (payload, reply) => {
+  let text = payload.message.text
 
-bot.hear(['turnos'], (payload, chat) => {
-	// Send a text message with buttons
-	chat.say({
-		text: '¿Qué tipo de turno?',
-		buttons: [
-			{ type: 'postback', title: 'Médicos', payload: 'MEDICOS' },
-			{ type: 'postback', title: 'Odontológicos', payload: 'ODONTO' }
-		]
-	});
-});
+  bot.getProfile(payload.sender.id, (err, profile) => {
+    if (err) throw err
 
-bot.on('postback:MEDICOS', (payload, chat) => {
-	chat.say({
-		text: 'Todavía no está disponible'
-	});
-});
+    reply({ text }, (err) => {
+      if (err) throw err
 
-bot.on('postback:ODONTO', (payload, chat) => {
-	chat.say({
-		text: 'Todavía no está disponible'
-	});
-});
+      console.log(`Devuelto a ${profile.first_name} ${profile.last_name}: ${text}`)
+    })
+  })
+})
 
-bot.hear('image', (payload, chat) => {
-	// Send an attachment
-	chat.say({
-		attachment: 'image',
-		url: 'http://example.com/image.png'
-	});
-});
-
-bot.hear('ask me something', (payload, chat) => {
-	chat.conversation((convo) => {
-		askName(convo);
-	});
-
-	const askName = (convo) => {
-		convo.ask(`What's your name?`, (payload, convo) => {
-			const text = payload.message.text;
-			convo.set('name', text);
-			convo.say(`Oh, your name is ${text}`).then(() => askFavoriteFood(convo));
-		});
-	};
-
-	const askFavoriteFood = (convo) => {
-		convo.ask(`What's your favorite food?`, (payload, convo) => {
-			const text = payload.message.text;
-			convo.set('food', text);
-			convo.say(`Got it, your favorite food is ${text}`).then(() => sendSummary(convo));
-		});
-	};
-
-	const sendSummary = (convo) => {
-		convo.say(`Ok, here's what you told me about you:
-	      - Name: ${convo.get('name')}
-	      - Favorite Food: ${convo.get('food')}`);
-      convo.end();
-	};
-});
-
-bot.start(process.env.PORT);
+http.createServer(bot.middleware()).listen(process.env.PORT)
+console.log('Swiss Medical bot server running at port ' + process.env.PORT)
