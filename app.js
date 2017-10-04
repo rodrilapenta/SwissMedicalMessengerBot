@@ -44,7 +44,7 @@ bot.setPersistentMenu([{
       "locale":"es_LA",
       "composer_input_disabled":false
     }
-}], function() {console.log("Menu configurado")})
+], function() {console.log("Menu configurado")})
 
 bot.on('error', (err) => {
   console.log(err.message)
